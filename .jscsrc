@@ -1,9 +1,6 @@
 {
   "esnext": true,
-  "excludeFiles": [
-    "www/dist/**",
-    "www/lib/**"
-  ],
+  "excludeFiles": [],
   "validateIndentation": 2,
   "disallowAnonymousFunctions": true,
   "disallowDanglingUnderscores": true,
@@ -74,7 +71,10 @@
   "requireSpaceBetweenArguments": true,
   "requireSpacesInAnonymousFunctionExpression": {
     "beforeOpeningRoundBrace": true,
-    "beforeOpeningCurlyBrace": true
+    "beforeOpeningCurlyBrace": true,
+    "allExcept": [
+      "shorthand"
+    ]
   },
   "requireSpacesInForStatement": true,
   "requireSpacesInFunctionDeclaration": {

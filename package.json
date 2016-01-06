@@ -1,14 +1,43 @@
 {
   "name": "node-amqp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wouldgo/node-amqp"
   },
-  "author": "",
+  "scripts": {
+    "lint": "eslint -c .eslintrc index.js && jshint -c .jshintrc --reporter=unix index.js && jscs -c .jscsrc index.js",
+    "precommit": "npm run-script lint",
+    "preversion": "npm run-script lint",
+    "version": "git add -A .",
+    "postversion": "git push && git push --tags",
+    "test": "lab --debug --verbose --colors spec/*.js"
+  },
+  "author": {
+    "name": "Dario Andrei",
+    "email": "wouldgo84@gmail.com",
+    "url": "https://github.com/wouldgo"
+  },
+  "contributors": [
+    {
+      "name": "Filippo Oretti",
+      "email": "filippo.oretti@gmail.com",
+      "url": "https://github.com/45kb"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "amqplib": "^0.4.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^4.1.6",
+    "code": "^2.1.0",
+    "eslint": "^1.10.3",
+    "husky": "^0.10.2",
+    "jscs": "^2.8.0",
+    "jshint": "^2.8.0",
+    "lab": "^8.0.1"
   }
 }

@@ -1,5 +1,5 @@
 {
   "host": "amqp://localhost",
-  "exchangeName": "dem:points",
+  "exchangeName": "node-amqp:test",
   "socketOptions": {}
 }

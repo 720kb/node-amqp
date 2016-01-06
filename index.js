@@ -3,8 +3,8 @@
   'use strict';
 
   var amqp = require('amqplib')
-    , Publisher = require('./lib/amqp-pub').bind(undefined, amqp).Publisher
-    , Subscriber = require('./lib/amqp-sub').bind(undefined, amqp).Subscriber;
+    , Publisher = require('./lib/pub')(amqp)
+    , Subscriber = require('./lib/sub')(amqp);
 
   module.exports = {
     'Publisher': Publisher,
