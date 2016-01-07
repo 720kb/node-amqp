@@ -12,9 +12,9 @@
     , nodeAmqp = require('..')
     , Publisher = nodeAmqp.Publisher
     , Subscriber = nodeAmqp.Subscriber
-    , exchangedMessage = {
+    , exchangedMessage = JSON.stringify({
       'message': 'hello'
-    };
+    });
 
   // jscs:disable disallowAnonymousFunctions
   // jscs:disable requireNamedUnassignedFunctions
@@ -26,9 +26,9 @@
 
     onMessage(message) {
 
-      console.info('AAAAAA!', this);
-      console.info(message.content.toString());
-      //this.emit('test:finished');
+      let messageArrived = message.content.toString();
+      expect(messageArrived).to.be.equal(exchangedMessage)
+      this.emit('test:finished');
     }
   }
   // jscs:enable disallowAnonymousFunctions
@@ -76,11 +76,11 @@
 
     it('should publish a message and recieve', done => {
 
-      subscriber.on('test:finished', () => {
+      subscriber.once('test:finished', () => {
 
         done();
       });
-      publisher.send(JSON.stringify(exchangedMessage));
+      publisher.send(exchangedMessage);
     });
   });
 
