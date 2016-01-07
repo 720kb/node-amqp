@@ -4,10 +4,14 @@
 
   var amqp = require('amqplib')
     , Publisher = require('./lib/pub')(amqp)
-    , Subscriber = require('./lib/sub')(amqp);
+    , Subscriber = require('./lib/sub')(amqp)
+    , Task = require('./lib/task')(amqp)
+    , Worker = require('./lib/worker')(amqp);
 
   module.exports = {
-    'Publisher': Publisher,
-    'Subscriber': Subscriber
+    Publisher,
+    Subscriber,
+    Task,
+    Worker
   };
 }(require, module));

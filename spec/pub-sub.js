@@ -27,7 +27,7 @@
     onMessage(message) {
 
       let messageArrived = message.content.toString();
-      expect(messageArrived).to.be.equal(exchangedMessage)
+      expect(messageArrived).to.be.equal(exchangedMessage);
       this.emit('test:finished');
     }
   }
