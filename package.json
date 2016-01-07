@@ -1,7 +1,7 @@
 {
   "name": "node-amqp",
   "version": "0.0.1",
-  "description": "",
+  "description": "a wrap upon amqplib",
   "main": "index.js",
   "repository": {
     "type": "git",
