@@ -16,7 +16,6 @@
       'message': 'hello'
     });
 
-
   describe('node-amqp task talks to worker', () => {
     let task
       , worker
@@ -64,12 +63,13 @@
       global.setTimeout(() => {
 
         worker.receive().then((message) => {
-
           let messageArrived = message.content.toString();
+
           expect(messageArrived).to.be.equal(exchangedMessage);
+          worker.cancelConsumer();
           done();
-        }, 5000);
-      });
+        });
+      }, 1500);
     });
   });
 
