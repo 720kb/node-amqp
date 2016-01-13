@@ -1,5 +1,6 @@
 {
   "host": "amqp://localhost",
-  "exchangeName": "node-amqp:test",
+  "exchangeName": "node-amqp:exchange-test",
+  "queueName": "node-amqp:queue-test",
   "socketOptions": {}
 }

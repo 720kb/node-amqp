@@ -25,9 +25,7 @@
 
       expect(taskMethods).to.only.include([
         'constructor',
-        'send',
-        'closeConnection',
-        'close']);
+        'send']);
       done();
     });
 

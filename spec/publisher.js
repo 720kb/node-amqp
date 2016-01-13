@@ -25,9 +25,7 @@
 
       expect(publisherMethods).to.only.include([
         'constructor',
-        'send',
-        'closeConnection',
-        'close']);
+        'send']);
       done();
     });
 
