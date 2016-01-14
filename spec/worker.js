@@ -43,6 +43,7 @@
         expect(worker[anElement]).to.be.a.function();
       });
 
+      worker.closeConnection();
       done();
     });
   });

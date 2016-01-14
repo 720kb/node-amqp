@@ -1,5 +1,5 @@
-/*global module,require*/
-(function testing(module, require) {
+/*global module,require,global*/
+(function testing(module, require, global) {
   'use strict';
 
   const code = require('code')
@@ -7,6 +7,7 @@
     , describe = lab.describe
     , it = lab.it
     , before = lab.before
+    , after = lab.after
     , expect = code.expect
     , testingConfigurations = require('./test.json')
     , nodeAmqp = require('..')
@@ -14,7 +15,12 @@
     , Subscriber = nodeAmqp.Subscriber
     , exchangedMessage = JSON.stringify({
       'message': 'hello'
-    });
+    })
+    , publisher = new Publisher(testingConfigurations);
+
+  let subscriber
+    , subFinished = false
+    , pubFinished = false;
 
   // jscs:disable disallowAnonymousFunctions
   // jscs:disable requireNamedUnassignedFunctions
@@ -34,44 +40,75 @@
   // jscs:enable disallowAnonymousFunctions
   // jscs:enable requireNamedUnassignedFunctions
 
+  subscriber = new MySubscriber();
+  subscriber.on('amqp:subscriber-ready', () => {
+
+    if (!subFinished) {
+
+      subFinished = true;
+    }
+  });
+
+  publisher.on('amqp:publisher-ready', () => {
+
+    if (!pubFinished) {
+
+      pubFinished = true;
+    }
+  });
+
+  subscriber.on('amqp:connection-closed', () => {
+
+    if (subFinished) {
+
+      subFinished = false;
+    }
+  });
+
+  publisher.on('amqp:connection-closed', () => {
+
+    if (pubFinished) {
+
+      pubFinished = false;
+    }
+  });
+
   describe('node-amqp publisher talks to subscriber', () => {
-    let subscriber
-      , publisher
-      , subFinished = false
-      , pubFinished = false;
 
     before(done => {
 
-      subscriber = new MySubscriber();
-      publisher = new Publisher(testingConfigurations);
-
-      subscriber.on('amqp:subscriber-ready', () => {
-
-        if (!subFinished) {
-
-          subFinished = true;
-        }
+      let onTimeoutTrigger = () => {
 
         if (pubFinished &&
           subFinished) {
 
           done();
+        } else {
+
+          global.setTimeout(onTimeoutTrigger, 20);
         }
-      });
+      };
 
-      publisher.on('amqp:publisher-ready', () => {
+      onTimeoutTrigger();
+    });
 
-        if (!pubFinished) {
+    after(done => {
 
-          pubFinished = true;
-        }
+      let onTimeoutTrigger = () => {
 
-        if (pubFinished &&
-          subFinished) {
+        if (!pubFinished &&
+          !subFinished) {
 
           done();
+        } else {
+
+          global.setTimeout(onTimeoutTrigger, 20);
         }
-      });
+      };
+
+      onTimeoutTrigger();
+      subscriber.closeConnection();
+      publisher.closeConnection();
     });
 
     it('should publish a message and recieve', done => {
@@ -87,4 +124,4 @@
   module.exports = {
     'lab': lab
   };
-}(module, require));
+}(module, require, global));

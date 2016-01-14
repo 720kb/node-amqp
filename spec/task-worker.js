@@ -14,118 +14,109 @@
     , Task = nodeAmqp.Task
     , Worker = nodeAmqp.Worker
     , exchangedMessage = JSON.stringify({
-      'message': 'hello'
+      'first': 'first'
     })
     , secondExchangedMessage = JSON.stringify({
-      'message': 'world'
-    });
+      'second': 'second'
+    })
+    , task = new Task(testingConfigurations)
+    , worker = new Worker(testingConfigurations);
+
+  let taskFinished = false
+    , workerFinished = false;
+
+  task.on('amqp:task-ready', () => {
+
+    if (!taskFinished) {
+
+      taskFinished = true;
+    }
+  });
+
+  worker.on('amqp:worker-ready', () => {
+
+    if (!workerFinished) {
+
+      workerFinished = true;
+    }
+  });
+
+  task.on('amqp:connection-closed', () => {
+
+    if (taskFinished) {
+
+      taskFinished = false;
+    }
+  });
+
+  worker.on('amqp:connection-closed', () => {
+
+    if (workerFinished) {
+
+      workerFinished = false;
+    }
+  });
 
   describe('node-amqp task talks to worker', () => {
-    let task
-      , worker
-      , taskFinished = false
-      , workerFinished = false;
 
     before(done => {
-
-      task = new Task(testingConfigurations);
-      worker = new Worker(testingConfigurations);
-
-      task.on('amqp:task-ready', () => {
-
-        if (!taskFinished) {
-
-          taskFinished = true;
-        }
+      let onTimeoutTrigger = () => {
 
         if (workerFinished &&
           taskFinished) {
 
           done();
+        } else {
+
+          global.setTimeout(onTimeoutTrigger, 20);
         }
-      });
+      };
 
-      worker.on('amqp:worker-ready', () => {
-
-        if (!workerFinished) {
-
-          workerFinished = true;
-        }
-
-        if (workerFinished &&
-          taskFinished) {
-
-          done();
-        }
-      });
+      onTimeoutTrigger();
     });
 
     after(done => {
 
-      task.on('amqp:connection-closed', () => {
-
-        if (taskFinished) {
-
-          taskFinished = false;
-        }
+      let onTimeoutTrigger = () => {
 
         if (!workerFinished &&
           !taskFinished) {
 
           done();
+        } else {
+
+          global.setTimeout(onTimeoutTrigger, 20);
         }
-      });
+      };
 
-      worker.on('amqp:connection-closed', () => {
-
-        if (workerFinished) {
-
-          workerFinished = false;
-        }
-
-        if (!workerFinished &&
-          !taskFinished) {
-
-          done();
-        }
-      });
-
+      onTimeoutTrigger();
       task.closeConnection();
       worker.closeConnection();
     });
 
     it('should publish a message and manage this after while', done => {
 
-      task.send(exchangedMessage);
+      worker.receive().then((message) => {
+        worker.cancelConsumer();
+        let messageArrived = message.content.toString();
 
-      global.setTimeout(() => {
-
-        worker.receive().then((message) => {
-          let messageArrived = message.content.toString();
-
-          expect(messageArrived).to.be.equal(exchangedMessage);
-          worker.cancelConsumer();
-          done();
-        });
+        expect(messageArrived).to.be.equal(exchangedMessage);
+        done();
       });
+      task.send(exchangedMessage);
     });
 
     it('should publish a message and resend this after while', done => {
 
-      task.send(secondExchangedMessage);
+      worker.receive().then((message) => {
+        worker.cancelConsumer();
+        let messageArrived = message.content.toString();
 
-      global.setTimeout(() => {
-
-        worker.receive().then((message) => {
-          console.info('AA');
-          let messageArrived = message.content.toString();
-
-          expect(messageArrived).to.be.equal(secondExchangedMessage);
-          worker.send(messageArrived);
-          worker.cancelConsumer();
-          done();
-        });
+        expect(messageArrived).to.be.equal(secondExchangedMessage);
+        worker.send(messageArrived);
+        done();
       });
+      task.send(secondExchangedMessage);
     });
   });
 

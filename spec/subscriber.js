@@ -44,9 +44,10 @@
     });
 
     it('should not instantiate subscriber directly (it\'s an abstract class)', done => {
+      let subscriber;
 
       try {
-        let subscriber = new Subscriber(testingConfigurations);
+        subscriber = new Subscriber(testingConfigurations);
 
         expect(subscriber).to.be.undefined();
       } catch (e) {
@@ -54,6 +55,10 @@
         expect(e).to.be.an.instanceof(Error);
       } finally {
 
+        if (subscriber) {
+
+          subscriber.closeConnection();
+        }
         done();
       }
     });
@@ -71,6 +76,8 @@
       });
 
       expect(mySubscriber.onMessage).to.be.a.function();
+
+      mySubscriber.closeConnection();
       done();
     });
   });

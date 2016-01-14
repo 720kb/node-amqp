@@ -41,6 +41,7 @@
         expect(task[anElement]).to.be.a.function();
       });
 
+      task.closeConnection();
       done();
     });
   });

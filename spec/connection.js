@@ -42,6 +42,7 @@
         expect(connection[anElement]).to.be.a.function();
       });
 
+      connection.closeConnection();
       done();
     });
 
@@ -60,6 +61,7 @@
 
       connection.on('amqp:channel-close', () => {
 
+        connection.closeConnection();
         done();
       });
       connection.closeChannel();

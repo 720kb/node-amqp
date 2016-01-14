@@ -41,6 +41,7 @@
         expect(publisher[anElement]).to.be.a.function();
       });
 
+      publisher.closeConnection();
       done();
     });
   });
