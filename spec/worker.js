@@ -26,6 +26,7 @@
       expect(workerMethods).to.only.include([
         'constructor',
         'receive',
+        'send',
         'cancelConsumer']);
       done();
     });

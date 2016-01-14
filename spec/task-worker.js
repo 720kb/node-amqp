@@ -7,6 +7,7 @@
     , describe = lab.describe
     , it = lab.it
     , before = lab.before
+    , after = lab.after
     , expect = code.expect
     , testingConfigurations = require('./test.json')
     , nodeAmqp = require('..')
@@ -14,6 +15,9 @@
     , Worker = nodeAmqp.Worker
     , exchangedMessage = JSON.stringify({
       'message': 'hello'
+    })
+    , secondExchangedMessage = JSON.stringify({
+      'message': 'world'
     });
 
   describe('node-amqp task talks to worker', () => {
@@ -56,6 +60,40 @@
       });
     });
 
+    after(done => {
+
+      task.on('amqp:connection-closed', () => {
+
+        if (taskFinished) {
+
+          taskFinished = false;
+        }
+
+        if (!workerFinished &&
+          !taskFinished) {
+
+          done();
+        }
+      });
+
+      worker.on('amqp:connection-closed', () => {
+
+        if (workerFinished) {
+
+          workerFinished = false;
+        }
+
+        if (!workerFinished &&
+          !taskFinished) {
+
+          done();
+        }
+      });
+
+      task.closeConnection();
+      worker.closeConnection();
+    });
+
     it('should publish a message and manage this after while', done => {
 
       task.send(exchangedMessage);
@@ -69,7 +107,25 @@
           worker.cancelConsumer();
           done();
         });
-      }, 1500);
+      });
+    });
+
+    it('should publish a message and resend this after while', done => {
+
+      task.send(secondExchangedMessage);
+
+      global.setTimeout(() => {
+
+        worker.receive().then((message) => {
+          console.info('AA');
+          let messageArrived = message.content.toString();
+
+          expect(messageArrived).to.be.equal(secondExchangedMessage);
+          worker.send(messageArrived);
+          worker.cancelConsumer();
+          done();
+        });
+      });
     });
   });
 
