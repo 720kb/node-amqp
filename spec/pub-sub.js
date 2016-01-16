@@ -15,12 +15,7 @@
     , Subscriber = nodeAmqp.Subscriber
     , exchangedMessage = JSON.stringify({
       'message': 'hello'
-    })
-    , publisher = new Publisher(testingConfigurations);
-
-  let subscriber
-    , subFinished = false
-    , pubFinished = false;
+    });
 
   // jscs:disable disallowAnonymousFunctions
   // jscs:disable requireNamedUnassignedFunctions
@@ -40,40 +35,43 @@
   // jscs:enable disallowAnonymousFunctions
   // jscs:enable requireNamedUnassignedFunctions
 
-  subscriber = new MySubscriber();
-  subscriber.on('amqp:subscriber-ready', () => {
-
-    if (!subFinished) {
-
-      subFinished = true;
-    }
-  });
-
-  publisher.on('amqp:publisher-ready', () => {
-
-    if (!pubFinished) {
-
-      pubFinished = true;
-    }
-  });
-
-  subscriber.on('amqp:connection-closed', () => {
-
-    if (subFinished) {
-
-      subFinished = false;
-    }
-  });
-
-  publisher.on('amqp:connection-closed', () => {
-
-    if (pubFinished) {
-
-      pubFinished = false;
-    }
-  });
-
   describe('node-amqp publisher talks to subscriber', () => {
+    let publisher = new Publisher(testingConfigurations)
+      , subscriber = new MySubscriber()
+      , subFinished = false
+      , pubFinished = false;
+
+    subscriber.on('amqp:subscriber-ready', () => {
+
+      if (!subFinished) {
+
+        subFinished = true;
+      }
+    });
+
+    publisher.on('amqp:publisher-ready', () => {
+
+      if (!pubFinished) {
+
+        pubFinished = true;
+      }
+    });
+
+    subscriber.on('amqp:connection-closed', () => {
+
+      if (subFinished) {
+
+        subFinished = false;
+      }
+    });
+
+    publisher.on('amqp:connection-closed', () => {
+
+      if (pubFinished) {
+
+        pubFinished = false;
+      }
+    });
 
     before(done => {
 

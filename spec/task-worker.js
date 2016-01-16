@@ -3,6 +3,7 @@
   'use strict';
 
   const code = require('code')
+    , amqp = require('amqplib')
     , lab = require('lab').script()
     , describe = lab.describe
     , it = lab.it
@@ -18,46 +19,45 @@
     })
     , secondExchangedMessage = JSON.stringify({
       'second': 'second'
-    })
-    , task = new Task(testingConfigurations)
-    , worker = new Worker(testingConfigurations);
-
-  let taskFinished = false
-    , workerFinished = false;
-
-  task.on('amqp:task-ready', () => {
-
-    if (!taskFinished) {
-
-      taskFinished = true;
-    }
-  });
-
-  worker.on('amqp:worker-ready', () => {
-
-    if (!workerFinished) {
-
-      workerFinished = true;
-    }
-  });
-
-  task.on('amqp:connection-closed', () => {
-
-    if (taskFinished) {
-
-      taskFinished = false;
-    }
-  });
-
-  worker.on('amqp:connection-closed', () => {
-
-    if (workerFinished) {
-
-      workerFinished = false;
-    }
-  });
+    });
 
   describe('node-amqp task talks to worker', () => {
+    let task = new Task(testingConfigurations)
+      , worker = new Worker(testingConfigurations)
+      , taskFinished = false
+      , workerFinished = false;
+
+    task.on('amqp:task-ready', () => {
+
+      if (!taskFinished) {
+
+        taskFinished = true;
+      }
+    });
+
+    worker.on('amqp:worker-ready', () => {
+
+      if (!workerFinished) {
+
+        workerFinished = true;
+      }
+    });
+
+    task.on('amqp:connection-closed', () => {
+
+      if (taskFinished) {
+
+        taskFinished = false;
+      }
+    });
+
+    worker.on('amqp:connection-closed', () => {
+
+      if (workerFinished) {
+
+        workerFinished = false;
+      }
+    });
 
     before(done => {
       let onTimeoutTrigger = () => {
@@ -76,13 +76,25 @@
     });
 
     after(done => {
-
       let onTimeoutTrigger = () => {
 
         if (!workerFinished &&
           !taskFinished) {
 
-          done();
+          amqp.connect(testingConfigurations.host, testingConfigurations.socketOptions)
+          .then(connection => {
+
+            return connection.createChannel();
+          })
+          .then(channel => {
+
+            channel.deleteQueue(testingConfigurations.queueName)
+            .then(() => {
+
+              channel.connection.close();
+              done();
+            });
+          });
         } else {
 
           global.setTimeout(onTimeoutTrigger, 20);
@@ -94,29 +106,47 @@
       worker.closeConnection();
     });
 
-    it('should publish a message and manage this after while', done => {
+    it('should send and manage a message', done => {
 
-      worker.receive().then((message) => {
+      worker.consume()
+      .then((message) => {
         worker.cancelConsumer();
         let messageArrived = message.content.toString();
 
         expect(messageArrived).to.be.equal(exchangedMessage);
         done();
+      })
+      .catch(err => {
+
+        done(err);
       });
+
       task.send(exchangedMessage);
     });
 
-    it('should publish a message and resend this after while', done => {
+    it('should send and get a message', done => {
 
-      worker.receive().then((message) => {
-        worker.cancelConsumer();
-        let messageArrived = message.content.toString();
+      worker.receive()
+      .then(message => {
 
-        expect(messageArrived).to.be.equal(secondExchangedMessage);
-        worker.send(messageArrived);
-        done();
+        expect(message).to.be.equal(false);
+        task.send(secondExchangedMessage);
+        worker.receive()
+        .then(anotherMsg => {
+          let messageArrived = anotherMsg.content.toString();
+
+          expect(messageArrived).to.be.equal(secondExchangedMessage);
+          done();
+        })
+        .catch(err => {
+
+          done(err);
+        });
+      })
+      .catch(err => {
+
+        done(err);
       });
-      task.send(secondExchangedMessage);
     });
   });
 

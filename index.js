@@ -2,7 +2,7 @@
 (function withNode(require, module) {
   'use strict';
 
-  var amqp = require('amqplib')
+  const amqp = require('amqplib')
     , Publisher = require('./lib/pub')(amqp)
     , Subscriber = require('./lib/sub')(amqp)
     , Task = require('./lib/task')(amqp)
