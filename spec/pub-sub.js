@@ -41,7 +41,7 @@
       , subFinished = false
       , pubFinished = false;
 
-    subscriber.on('amqp:subscriber-ready', () => {
+    subscriber.on('amqp:ready', () => {
 
       if (!subFinished) {
 
@@ -49,7 +49,7 @@
       }
     });
 
-    publisher.on('amqp:publisher-ready', () => {
+    publisher.on('amqp:ready', () => {
 
       if (!pubFinished) {
 

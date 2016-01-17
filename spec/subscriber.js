@@ -32,7 +32,7 @@
       , subscriberFinished = false
       , subscriberMethods = Object.getOwnPropertyNames(Subscriber.prototype);
 
-    mySubscriber.on('amqp:subscriber-ready', () => {
+    mySubscriber.on('amqp:ready', () => {
 
       if (!subscriberFinished) {
 

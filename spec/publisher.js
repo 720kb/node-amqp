@@ -18,7 +18,7 @@
       , publisherFinished = false
       , publisherMethods = Object.getOwnPropertyNames(Publisher.prototype);
 
-    publisher.on('amqp:publisher-ready', () => {
+    publisher.on('amqp:ready', () => {
 
       if (!publisherFinished) {
 

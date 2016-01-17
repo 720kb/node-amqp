@@ -27,7 +27,7 @@
       , taskFinished = false
       , workerFinished = false;
 
-    task.on('amqp:task-ready', () => {
+    task.on('amqp:ready', () => {
 
       if (!taskFinished) {
 
@@ -35,7 +35,7 @@
       }
     });
 
-    worker.on('amqp:worker-ready', () => {
+    worker.on('amqp:ready', () => {
 
       if (!workerFinished) {
 
