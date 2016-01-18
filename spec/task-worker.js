@@ -131,17 +131,20 @@
 
         expect(message).to.be.equal(false);
         task.send(secondExchangedMessage);
-        worker.receive()
-        .then(anotherMsg => {
-          let messageArrived = anotherMsg.content.toString();
+        global.setTimeout(() => {
 
-          expect(messageArrived).to.be.equal(secondExchangedMessage);
-          done();
-        })
-        .catch(err => {
+          worker.receive()
+          .then(anotherMsg => {
+            let messageArrived = anotherMsg.content.toString();
 
-          done(err);
-        });
+            expect(messageArrived).to.be.equal(secondExchangedMessage);
+            done();
+          })
+          .catch(err => {
+
+            done(err);
+          });
+        }, 0);
       })
       .catch(err => {
 
