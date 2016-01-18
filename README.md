@@ -18,7 +18,7 @@ $ npm install node-amqp --save
 in your project folder.
 
 ## Usage
-At this moment, the module expose four objects that manages two kind of interactions between actors:
+At this moment, the module expose four objects that manage two kind of interactions between actors:
  - Publish/Subscribe;
  - Work queue.
 
@@ -97,7 +97,7 @@ const nodeAmqp = require('node-amqp')
 //1st approach register a consumer:
 worker.consume()
 .then(message => {
-  worker.cancelConsumer(); //cancels the consumer, so this handler is called once
+  worker.cancelConsumer(); //if you want to cancel the consumer call this method.
   let messageArrived = message.content.toString();
 
   console.info(`${messageArrived} arrived from producer`);
