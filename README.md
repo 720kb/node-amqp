@@ -119,11 +119,10 @@ worker.receive()
 })
 .catch(err => {
 
-  done(err);
+  throw new Error(err);
 });
 
 ```
-
 
 ## Contributing
 
