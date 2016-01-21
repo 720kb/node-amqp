@@ -32,7 +32,6 @@
     "amqplib": "^0.4.0"
   },
   "devDependencies": {
-    "babel-eslint": "^4.1.6",
     "code": "^2.1.0",
     "eslint": "^1.10.3",
     "husky": "^0.10.2",
