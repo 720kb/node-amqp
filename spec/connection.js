@@ -1,5 +1,5 @@
 /*global module,require*/
-(function testing(module, require) {
+(function testing() {
   'use strict';
 
   const code = require('code')
@@ -37,7 +37,7 @@
       expect(connection).to.be.an.object();
       expect(connection).to.be.an.instanceof(Connection);
 
-      taskMethods.forEach((anElement) => {
+      taskMethods.forEach(anElement => {
 
         expect(connection[anElement]).to.be.a.function();
       });
@@ -70,6 +70,6 @@
   });
 
   module.exports = {
-    'lab': lab
+    lab
   };
-}(module, require));
+}());

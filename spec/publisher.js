@@ -1,5 +1,5 @@
 /*global module,require,global*/
-(function testing(module, require, global) {
+(function testing() {
   'use strict';
 
   const code = require('code')
@@ -11,12 +11,13 @@
     , expect = code.expect
     , testingConfigurations = require('./test.json')
     , nodeAmqp = require('..')
-    , Publisher = nodeAmqp.Publisher;
+    , Publisher = nodeAmqp.Publisher
+    , retryTimeoutMillisec = 20;
 
   describe('node-amqp publisher is correctly instantiated', () => {
-    let publisher = new Publisher(testingConfigurations)
-      , publisherFinished = false
+    const publisher = new Publisher(testingConfigurations)
       , publisherMethods = Object.getOwnPropertyNames(Publisher.prototype);
+    let publisherFinished = false;
 
     publisher.on('amqp:ready', () => {
 
@@ -35,14 +36,14 @@
     });
 
     before(done => {
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (publisherFinished) {
 
           done();
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -50,12 +51,11 @@
     });
 
     after(done => {
-
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (publisherFinished) {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         } else {
 
           done();
@@ -80,7 +80,7 @@
       expect(publisher).to.be.an.object();
       expect(publisher).to.be.an.instanceof(Publisher);
 
-      publisherMethods.forEach((anElement) => {
+      publisherMethods.forEach(anElement => {
 
         expect(publisher[anElement]).to.be.a.function();
       });
@@ -91,6 +91,6 @@
   });
 
   module.exports = {
-    'lab': lab
+    lab
   };
 }(module, require, global));

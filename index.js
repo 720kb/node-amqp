@@ -1,5 +1,5 @@
 /*global require,module*/
-(function withNode(require, module) {
+(function withNode() {
   'use strict';
 
   const amqp = require('amqplib')
@@ -14,4 +14,4 @@
     Task,
     Worker
   };
-}(require, module));
+}());

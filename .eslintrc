@@ -56,7 +56,7 @@
     "default-case": 2,
     "dot-location": [
       2,
-      "object"
+      "property"
     ],
     "dot-notation": 2,
     "eqeqeq": [
@@ -149,7 +149,6 @@
     ],
     "no-use-before-define": 2,
     "callback-return": 1,
-    "global-require": 1,
     "handle-callback-err": 2,
     "no-new-require": 2,
     "no-path-concat": 2,
@@ -342,7 +341,6 @@
     ],
     "prefer-arrow-callback": 1,
     "prefer-const": 1,
-    "prefer-reflect": 1,
     "prefer-spread": 1,
     "prefer-template": 2,
     "require-yield": 2
