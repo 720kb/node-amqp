@@ -1,5 +1,5 @@
 /*global module,require,global*/
-(function testing(module, require, global) {
+(function testing() {
   'use strict';
 
   const code = require('code')
@@ -11,10 +11,9 @@
     , expect = code.expect
     , testingConfigurations = require('./test.json')
     , nodeAmqp = require('..')
-    , Subscriber = nodeAmqp.Subscriber;
+    , Subscriber = nodeAmqp.Subscriber
+    , retryTimeoutMillisec = 20;
 
-  // jscs:disable disallowAnonymousFunctions
-  // jscs:disable requireNamedUnassignedFunctions
   class MySubscriber extends Subscriber {
 
     constructor() {
@@ -24,13 +23,11 @@
     onMessage() {
     }
   }
-  // jscs:enable disallowAnonymousFunctions
-  // jscs:enable requireNamedUnassignedFunctions
 
   describe('node-amqp subscriber is correctly instantiated', () => {
-    let mySubscriber = new MySubscriber()
-      , subscriberFinished = false
+    const mySubscriber = new MySubscriber()
       , subscriberMethods = Object.getOwnPropertyNames(Subscriber.prototype);
+    let subscriberFinished = false;
 
     mySubscriber.on('amqp:ready', () => {
 
@@ -49,14 +46,14 @@
     });
 
     before(done => {
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (subscriberFinished) {
 
           done();
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -64,12 +61,11 @@
     });
 
     after(done => {
-
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (subscriberFinished) {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         } else {
 
           done();
@@ -95,9 +91,9 @@
         subscriber = new Subscriber(testingConfigurations);
 
         expect(subscriber).to.be.undefined();
-      } catch (e) {
+      } catch (err) {
 
-        expect(e).to.be.an.instanceof(Error);
+        expect(err).to.be.an.instanceof(Error);
       } finally {
 
         if (subscriber) {
@@ -114,7 +110,7 @@
       expect(mySubscriber).to.be.an.object();
       expect(mySubscriber).to.be.an.instanceof(Subscriber);
 
-      subscriberMethods.forEach((anElement) => {
+      subscriberMethods.forEach(anElement => {
 
         expect(mySubscriber[anElement]).to.be.a.function();
       });
@@ -127,6 +123,6 @@
   });
 
   module.exports = {
-    'lab': lab
+    lab
   };
-}(module, require, global));
+}());

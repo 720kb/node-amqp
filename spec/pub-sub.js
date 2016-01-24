@@ -1,5 +1,5 @@
 /*global module,require,global*/
-(function testing(module, require, global) {
+(function testing() {
   'use strict';
 
   const code = require('code')
@@ -15,10 +15,9 @@
     , Subscriber = nodeAmqp.Subscriber
     , exchangedMessage = JSON.stringify({
       'message': 'hello'
-    });
+    })
+    , retryTimeoutMillisec = 20;
 
-  // jscs:disable disallowAnonymousFunctions
-  // jscs:disable requireNamedUnassignedFunctions
   class MySubscriber extends Subscriber {
 
     constructor() {
@@ -26,19 +25,17 @@
     }
 
     onMessage(message) {
-      let messageArrived = message.content.toString();
+      const messageArrived = message.content.toString();
 
       expect(messageArrived).to.be.equal(exchangedMessage);
       this.emit('test:finished');
     }
   }
-  // jscs:enable disallowAnonymousFunctions
-  // jscs:enable requireNamedUnassignedFunctions
 
   describe('node-amqp publisher talks to subscriber', () => {
-    let publisher = new Publisher(testingConfigurations)
-      , subscriber = new MySubscriber()
-      , subFinished = false
+    const publisher = new Publisher(testingConfigurations)
+      , subscriber = new MySubscriber();
+    let subFinished = false
       , pubFinished = false;
 
     subscriber.on('amqp:ready', () => {
@@ -75,7 +72,7 @@
 
     before(done => {
 
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (pubFinished &&
           subFinished) {
@@ -83,7 +80,7 @@
           done();
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -92,7 +89,7 @@
 
     after(done => {
 
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (!pubFinished &&
           !subFinished) {
@@ -100,7 +97,7 @@
           done();
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -120,6 +117,6 @@
   });
 
   module.exports = {
-    'lab': lab
+    lab
   };
-}(module, require, global));
+}());

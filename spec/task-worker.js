@@ -1,5 +1,5 @@
 /*global module,require,global*/
-(function testing(module, require, global) {
+(function testing() {
   'use strict';
 
   const code = require('code')
@@ -19,12 +19,13 @@
     })
     , secondExchangedMessage = JSON.stringify({
       'second': 'second'
-    });
+    })
+    , retryTimeoutMillisec = 20;
 
   describe('node-amqp task talks to worker', () => {
-    let task = new Task(testingConfigurations)
-      , worker = new Worker(testingConfigurations)
-      , taskFinished = false
+    const task = new Task(testingConfigurations)
+      , worker = new Worker(testingConfigurations);
+    let taskFinished = false
       , workerFinished = false;
 
     task.on('amqp:ready', () => {
@@ -60,7 +61,7 @@
     });
 
     before(done => {
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (workerFinished &&
           taskFinished) {
@@ -68,7 +69,7 @@
           done();
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -76,7 +77,7 @@
     });
 
     after(done => {
-      let onTimeoutTrigger = () => {
+      const onTimeoutTrigger = () => {
 
         if (!workerFinished &&
           !taskFinished) {
@@ -97,7 +98,7 @@
           });
         } else {
 
-          global.setTimeout(onTimeoutTrigger, 20);
+          global.setTimeout(onTimeoutTrigger, retryTimeoutMillisec);
         }
       };
 
@@ -109,9 +110,9 @@
     it('should send and manage a message', done => {
 
       worker.consume()
-      .then((message) => {
+      .then(message => {
         worker.cancelConsumer();
-        let messageArrived = message.content.toString();
+        const messageArrived = message.content.toString();
 
         expect(messageArrived).to.be.equal(exchangedMessage);
         done();
@@ -135,7 +136,7 @@
 
           worker.receive()
           .then(anotherMsg => {
-            let messageArrived = anotherMsg.content.toString();
+            const messageArrived = anotherMsg.content.toString();
 
             expect(messageArrived).to.be.equal(secondExchangedMessage);
             done();
@@ -154,6 +155,6 @@
   });
 
   module.exports = {
-    'lab': lab
+    lab
   };
-}(module, require, global));
+}());
