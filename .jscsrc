@@ -2,7 +2,7 @@
   "esnext": true,
   "excludeFiles": [],
   "validateIndentation": 2,
-  "disallowAnonymousFunctions": true,
+  "disallowAnonymousFunctions": false,
   "disallowDanglingUnderscores": true,
   "disallowEmptyBlocks": true,
   "disallowFunctionDeclarations": true,
@@ -45,7 +45,7 @@
   "requireLineBreakAfterVariableAssignment": true,
   "requireLineFeedAtFileEnd": true,
   "requireMultipleVarDecl": true,
-  "requireNamedUnassignedFunctions": true,
+  "requireNamedUnassignedFunctions": false,
   "requireOperatorBeforeLineBreak": [
       "?",
       "=",

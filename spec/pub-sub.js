@@ -18,8 +18,6 @@
     })
     , retryTimeoutMillisec = 20;
 
-  // jscs:disable disallowAnonymousFunctions
-  // jscs:disable requireNamedUnassignedFunctions
   class MySubscriber extends Subscriber {
 
     constructor() {
@@ -33,8 +31,6 @@
       this.emit('test:finished');
     }
   }
-  // jscs:enable disallowAnonymousFunctions
-  // jscs:enable requireNamedUnassignedFunctions
 
   describe('node-amqp publisher talks to subscriber', () => {
     const publisher = new Publisher(testingConfigurations)

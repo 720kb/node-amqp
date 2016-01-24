@@ -14,8 +14,6 @@
     , Subscriber = nodeAmqp.Subscriber
     , retryTimeoutMillisec = 20;
 
-  // jscs:disable disallowAnonymousFunctions
-  // jscs:disable requireNamedUnassignedFunctions
   class MySubscriber extends Subscriber {
 
     constructor() {
@@ -25,8 +23,6 @@
     onMessage() {
     }
   }
-  // jscs:enable disallowAnonymousFunctions
-  // jscs:enable requireNamedUnassignedFunctions
 
   describe('node-amqp subscriber is correctly instantiated', () => {
     const mySubscriber = new MySubscriber()
