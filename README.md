@@ -4,7 +4,7 @@ Wrapper around the [`amqplib`](https://github.com/squaremo/amqp.node) node libra
 
 The main goal of this module is to hide the actual procedures needed to establish a amqp connection instantiating objects.
 
-node-amqp is developed by [720kb](720kb.net).
+node-amqp is developed by [720kb](https://720kb.net).
 
 ## Requirements
 Node.js v5.0.0+
